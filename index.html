@@ -8,6 +8,7 @@
         body { font-family: Arial, sans-serif; }
         .container { max-width: 600px; margin: 20px auto; }
         .slot { padding: 10px; border: 1px solid #ccc; margin: 5px 0; }
+        .admin-panel { margin-top: 20px; padding: 10px; border: 1px solid #000; }
     </style>
 </head>
 <body>
@@ -23,6 +24,14 @@
         <h3>Available Slots</h3>
         <ul id="available-slots"></ul>
         <p id="message"></p>
+    </div>
+
+    <div class="container admin-panel">
+        <h2>Admin Panel</h2>
+        <h3>Sign-Ups</h3>
+        <ul id="admin-signups"></ul>
+        <h3>Waitlist</h3>
+        <ul id="admin-waitlist"></ul>
     </div>
 
     <script>
@@ -50,6 +59,7 @@
                 listItem.innerText = `${slot} - ${spotsLeft} spots left`;
                 availableSlotsDiv.appendChild(listItem);
             });
+            renderAdminPanel();
         }
 
         function selectSlot(slot) {
@@ -70,6 +80,23 @@
                 document.getElementById("message").innerText = `Added to waitlist for ${slot}`;
             }
             renderSlots();
+        }
+
+        function renderAdminPanel() {
+            const adminSignups = document.getElementById("admin-signups");
+            const adminWaitlist = document.getElementById("admin-waitlist");
+            adminSignups.innerHTML = "";
+            adminWaitlist.innerHTML = "";
+            
+            slots.forEach(slot => {
+                const signupList = document.createElement("li");
+                signupList.innerHTML = `<strong>${slot}:</strong> ${signups[slot] ? signups[slot].join(", ") : "No sign-ups"}`;
+                adminSignups.appendChild(signupList);
+                
+                const waitlistList = document.createElement("li");
+                waitlistList.innerHTML = `<strong>${slot}:</strong> ${waitlist[slot] ? waitlist[slot].join(", ") : "No waitlist"}`;
+                adminWaitlist.appendChild(waitlistList);
+            });
         }
 
         document.getElementById("signup-form").addEventListener("submit", (e) => {
