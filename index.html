@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table Tennis Sign-Up</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { max-width: 600px; margin: 20px auto; }
+        .slot { padding: 10px; border: 1px solid #ccc; margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Table Tennis Weekly Sign-Up</h2>
+        <form id="signup-form">
+            <label for="name">Your Name:</label>
+            <input type="text" id="name" required>
+            <h3>Select a Time Slot:</h3>
+            <div id="slots"></div>
+            <button type="submit">Sign Up</button>
+        </form>
+        <h3>Available Slots</h3>
+        <ul id="available-slots"></ul>
+        <p id="message"></p>
+    </div>
+
+    <script>
+        const slots = ["Monday 3 PM", "Tuesday 4 PM", "Wednesday 5 PM", "Thursday 6 PM", "Friday 7 PM"];
+        const maxPlayers = 8;
+        let signups = {};
+        let waitlist = {};
+
+        function renderSlots() {
+            const slotsDiv = document.getElementById("slots");
+            const availableSlotsDiv = document.getElementById("available-slots");
+            slotsDiv.innerHTML = "";
+            availableSlotsDiv.innerHTML = "";
+            
+            slots.forEach(slot => {
+                const count = signups[slot] ? signups[slot].length : 0;
+                const spotsLeft = maxPlayers - count;
+                const button = document.createElement("button");
+                button.innerText = `${slot} (${count}/8)`;
+                button.disabled = count >= maxPlayers;
+                button.onclick = () => selectSlot(slot);
+                slotsDiv.appendChild(button);
+                
+                const listItem = document.createElement("li");
+                listItem.innerText = `${slot} - ${spotsLeft} spots left`;
+                availableSlotsDiv.appendChild(listItem);
+            });
+        }
+
+        function selectSlot(slot) {
+            const name = document.getElementById("name").value.trim();
+            if (!name) {
+                alert("Please enter your name.");
+                return;
+            }
+
+            if (!signups[slot]) signups[slot] = [];
+            if (!waitlist[slot]) waitlist[slot] = [];
+
+            if (signups[slot].length < maxPlayers) {
+                signups[slot].push(name);
+                document.getElementById("message").innerText = `Signed up for ${slot}`;
+            } else {
+                waitlist[slot].push(name);
+                document.getElementById("message").innerText = `Added to waitlist for ${slot}`;
+            }
+            renderSlots();
+        }
+
+        document.getElementById("signup-form").addEventListener("submit", (e) => {
+            e.preventDefault();
+        });
+
+        renderSlots();
+    </script>
+</body>
+</html>
